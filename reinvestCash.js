@@ -147,14 +147,12 @@ casper.then(function() {
 //BEGIN finalize order
 casper.then(function() {
 	this.myBeginStep('finalize order');
-	// this.waitUntilVisible('#place-order-link2', function() {
-	// 	this.click('#place-order-link2');
-	// });
+	this.myWaitUntilVisible('#place-order-link2', function() {
+		this.click('#place-order-link2');
+		this.wait(globalTimeout);
+		this.echo('SUCCESS order finalized');)
+	});
 });
 //END finalize order
-
-casper.then(function() {
-	this.capture('almostDone.png');
-});
 
 casper.run();
