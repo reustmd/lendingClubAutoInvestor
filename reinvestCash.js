@@ -1,8 +1,15 @@
 var casper = require('casper').create();
 var url = 'https://www.lendingclub.com/account/gotoLogin.action';
 
-var username = '';
-var password = '';
+var email = casper.cli.get('email');
+var password = casper.cli.get('password');
+var minAvailableCash = casper.cli.get('minCash');
+var minExpectedReturn = casper.cli.get('minReturn');
+
+if (!email || !password || !minAvailableCash || !minExpectedReturn) { 
+	casper.echo('ERROR missing parameter(s)');
+	casper.exit();
+}
 
 casper.myBeginStep = function(description) {
 	this.echo(description);
@@ -15,13 +22,14 @@ casper.start(url, function() {
 	this.myBeginStep('login');
 
 	this.waitUntilVisible('#email', function() {
-		this.evaluate(function(username, password) {
-			document.querySelector('#email').setAttribute('value', username);
+
+		this.evaluate(function(email, password) {
+			document.querySelector('#email').setAttribute('value', email);
 			document.querySelector('#password').setAttribute('value', password);
 			document.querySelector('form[action="/account/login.action"]').submit();
-		}, username, password);	
+		}, email, password);	
 
-		this.waitUntilVisible('#master_content');
+			this.waitUntilVisible('#master_utilities_welcome', null, function() {this.capture('login_timeout.png')}, 10000);
 	});
 });
 //END login
@@ -52,7 +60,7 @@ casper.then(function() {
 
 	this.echo('Available cash: ' + availableCash);
 
-	if (availableCash < 25) {
+	if (availableCash < minAvailableCash) {
 		this.echo('Available cash too low, exiting...');
 		this.exit();
 	}
@@ -109,7 +117,7 @@ casper.then(function() {
 
 		this.echo('Expected return: ' + expectedReturn);
 
-		if (expectedReturn < 8) {
+		if (expectedReturn < minExpectedReturn) {
 			this.echo('Cancelling due to low expected return');
 			this.exit();
 		}
