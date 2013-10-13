@@ -57,7 +57,10 @@ casper.thenOpen('https://www.lendingclub.com/portfolio/confirmStartNewPortfolio.
 
 	this.myWaitFor(function() {
 		return this.evaluate(function() {
-			return document.querySelector('#risk-strategy-buttons').style.opacity === "1";
+			var readyToInvest = document.querySelector('#risk-strategy-buttons').style.opacity === "1";
+			var askingForFunds = document.querySelector('a[href="/account/addFunds.action"]');
+
+			return readyToInvest || askingForFunds;
 		});
 	});;
 	
@@ -150,7 +153,7 @@ casper.then(function() {
 	this.myWaitUntilVisible('#place-order-link2', function() {
 		this.click('#place-order-link2');
 		this.wait(globalTimeout);
-		this.echo('SUCCESS order finalized');)
+		this.echo('SUCCESS order finalized');
 	});
 });
 //END finalize order
