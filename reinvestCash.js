@@ -4,32 +4,37 @@ var url = 'https://www.lendingclub.com/account/gotoLogin.action';
 var username = '';
 var password = '';
 
+casper.myBeginStep = function(description) {
+	this.echo(description);
+	this.capture(description + '.png');
+}
+
 //BEGIN login
 casper.start(url, function() {
 	
-	beginStep(this, 'login');
+	this.myBeginStep('login');
 
 	this.waitUntilVisible('#email', function() {
-		this.evaluate(function() {
+		this.evaluate(function(username, password) {
 			document.querySelector('#email').setAttribute('value', username);
 			document.querySelector('#password').setAttribute('value', password);
 			document.querySelector('form[action="/account/login.action"]').submit();
-		});	
+		}, username, password);	
 
-		casper.waitUntilVisible('#master_content');
+		this.waitUntilVisible('#master_content');
 	});
 });
 //END login
 
 //BEGIN make sure we're starting from scratch
 casper.thenOpen('https://www.lendingclub.com/portfolio/confirmStartNewPortfolio.action', function() {
-	beginStep(this, "make sure we're starting from scratch");
+	this.myBeginStep("make sure we're starting from scratch");
 
 	this.waitFor(function() {
 		return this.evaluate(function() {
 			return document.querySelector('#risk-strategy-buttons').style.opacity === "1";
 		});
-	});
+	}, null, null, 10000);
 	
 });
 //END make sure we're starting from scratch
@@ -37,7 +42,7 @@ casper.thenOpen('https://www.lendingclub.com/portfolio/confirmStartNewPortfolio.
 //BEGIN check available cash
 casper.then(function() {
 	
-	beginStep(this, 'check available cash');
+	this.myBeginStep('check available cash');
 	var availableCash = this.evaluate(function() {
 		var formattedCashString = document.querySelector('#availableCash').innerHTML;
 		var cashString = formattedCashString.replace('$', '').replace(',', '');
@@ -57,7 +62,7 @@ casper.then(function() {
 //BEGIN open saved filter
 casper.then(function() {
 
-	beginStep(this, 'open saved filter');
+	this.myBeginStep('open saved filter');
 	this.capture('before savedFiltersButton.png');
 	this.click('#savedFiltersButton');
 
@@ -81,10 +86,10 @@ casper.then(function() {
 
 //BEGIN initialize order
 casper.then(function() {
-	beginStep(this, 'initialize order');
+	this.myBeginStep('initialize order');
 	this.click('#more-aggressive');
 
-	waitUntilVisible(this, '#view-selected-portfolio-notes', function() {
+	this.waitUntilVisible('#view-selected-portfolio-notes', function() {
 		this.click('#view-selected-portfolio-notes');
 	});
 });
@@ -92,9 +97,9 @@ casper.then(function() {
 
 //BEGIN if projected return high enough, continue order
 casper.then(function() {
-	beginStep(this, 'if projected return high enough, continue order');
+	this.myBeginStep('if projected return high enough, continue order');
 	
-	waitUntilVisible(this, '#finish2', function() {
+	this.waitUntilVisible('#finish2', function() {
 		var expectedReturn = this.evaluate(function() {
 			var formattedExpectedReturn = document.querySelector('#projected-returns').innerHTML;
 			var expectedReturn = formattedExpectedReturn.replace('%', '');
@@ -116,7 +121,7 @@ casper.then(function() {
 
 //BEGIN finalize order
 casper.then(function() {
-	beginStep(this, 'finalize order');
+	this.myBeginStep('finalize order');
 	// this.waitUntilVisible('#place-order-link2', function() {
 	// 	this.click('#place-order-link2');
 	// });
@@ -128,24 +133,3 @@ casper.then(function() {
 });
 
 casper.run();
-
-function beginStep(casperContext, description) {
-	casperContext.echo(description);
-	casperContext.capture(description + '.png');
-}
-
-function waitUntilVisible(casperContext, selector, callback) {
-	casperContext.waitUntilVisible(selector, function() {
-		this.echo('BEGIN wait for: ' + selector);
-		
-		if (callback) {
-			callback.apply(this);
-		}
-		
-		this.echo('END wait for: ' + selector);
-	}, function() {
-		this.echo('TIMEOUT waiting for selector: ' + selector);
-		this.capture('timeout.png');
-		this.exit();
-	}, 10000)
-}
