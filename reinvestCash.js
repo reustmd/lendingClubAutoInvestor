@@ -5,7 +5,7 @@ var email = casper.cli.get('email');
 var password = casper.cli.get('password');
 var minAvailableCash = casper.cli.get('minCash');
 var minExpectedReturn = casper.cli.get('minReturn');
-var globalTimeout = 30000;
+var globalTimeout = casper.cli.get('timeout');
 
 if (!email || !password || !minAvailableCash || !minExpectedReturn) { 
 	casper.echo('ERROR missing parameter(s)');
