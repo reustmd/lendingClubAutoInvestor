@@ -1,7 +1,7 @@
 LendingClubAutoInvestor
 =======================
 
-CasperJS script to automatically reinvest idle cash in Lending Club.
+Unfortunately lending club doesn't offer a free way to automatically reinvest note payouts.  As a result, you can quickly end up with lots of investable cash just sitting in your account.  That's why I created this CasperJS script to automatically reinvest my idle cash.
 
 The script requires that you've setup an investment filter within the Lending Club website.
 
