@@ -14,7 +14,9 @@ Requirements
 
 Usage
 =======================
+```
 casperjs reinvestCash.js --email=[yourLendingClubEmail] --password=[yourLendingClubPassword] --minCash=50 --minReturn=8 --timeout=30000
+```
 
 All parameters are required.
 
