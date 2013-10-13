@@ -25,6 +25,14 @@ casper.myWaitUntilVisible = function(selector, then) {
 	}, globalTimeout);
 }
 
+casper.myWaitFor = function(predicate, then) {
+	this.waitFor(predicate, then, function timeout() {
+		this.echo('ERROR waitFor');
+		this.capture('waitFor.png');
+		this.exit();
+	}, globalTimeout);
+}
+
 //BEGIN login
 casper.start(url, function() {
 	
@@ -47,11 +55,11 @@ casper.start(url, function() {
 casper.thenOpen('https://www.lendingclub.com/portfolio/confirmStartNewPortfolio.action', function() {
 	this.myBeginStep("make sure we're starting from scratch");
 
-	this.waitFor(function() {
+	this.myWaitFor(function() {
 		return this.evaluate(function() {
 			return document.querySelector('#risk-strategy-buttons').style.opacity === "1";
 		});
-	}, null, null, 10000);
+	});;
 	
 });
 //END make sure we're starting from scratch
@@ -83,7 +91,7 @@ casper.then(function() {
 	this.capture('before savedFiltersButton.png');
 	this.click('#savedFiltersButton');
 
-	this.waitFor(function() {
+	this.myWaitFor(function() {
 		return this.evaluate(function() {
 			return document.querySelector('.savedCriteriaLoad').innerHTML === "Reust Standard";
 		});
@@ -91,7 +99,7 @@ casper.then(function() {
 		this.click('.savedCriteriaLoad');
 		this.myWaitUntilVisible('.mask');
 		this.waitWhileVisible('.mask');
-		this.waitFor(function() {
+		this.myWaitFor(function() {
 			return this.evaluate(function() {
 				return document.querySelector('#risk-strategy-buttons').style.opacity === "1";
 			});
