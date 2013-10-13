@@ -36,15 +36,19 @@ I have my copy of the script running on AWS free tier.  I setup a micro EC2 inst
 - Created a bash wrapper script (see below)
 - Added a crontab entry to run the script every Sunday at 6:05 Pacific
 
-Sample Wrapper Script (runLendingClubInvest.sh)
+Sample Wrapper Script
 ======================
+```
 #!/bin/bash
 kill $(pgrep phantomjs)
 cd /home/ubuntu/lendingClubAutoInvestor
 git pull
 /usr/local/bin/casperjs /home/ubuntu/lendingClubAutoInvestor/reinvestCash.js [my parmeters, see usage above]
+```
 
 Sample Crontab
 ======================
+```
 MAILTO=reustmd@gmail.com
 5 1 * * 0 /home/ubuntu/runLendingClubInvest.sh
+```
