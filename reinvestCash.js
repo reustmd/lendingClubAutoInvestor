@@ -5,6 +5,7 @@ var email = casper.cli.get('email');
 var password = casper.cli.get('password');
 var minAvailableCash = casper.cli.get('minCash');
 var minExpectedReturn = casper.cli.get('minReturn');
+var globalTimeout = 30000;
 
 if (!email || !password || !minAvailableCash || !minExpectedReturn) { 
 	casper.echo('ERROR missing parameter(s)');
@@ -16,12 +17,20 @@ casper.myBeginStep = function(description) {
 	this.capture(description + '.png');
 }
 
+casper.myWaitUntilVisible = function(selector, then) {
+	this.waitUntilVisible(selector, then, function timeout() {
+		this.echo('ERROR timeout waitUntilVisible: ' + selector);
+		this.capture(selector + '.png');
+		this.exit();
+	}, globalTimeout);
+}
+
 //BEGIN login
 casper.start(url, function() {
 	
 	this.myBeginStep('login');
 
-	this.waitUntilVisible('#email', function() {
+	this.myWaitUntilVisible('#email', function() {
 
 		this.evaluate(function(email, password) {
 			document.querySelector('#email').setAttribute('value', email);
@@ -29,7 +38,7 @@ casper.start(url, function() {
 			document.querySelector('form[action="/account/login.action"]').submit();
 		}, email, password);	
 
-			this.waitUntilVisible('#master_utilities_welcome', null, function() {this.capture('login_timeout.png')}, 10000);
+		this.myWaitUntilVisible('#narL');
 	});
 });
 //END login
@@ -80,7 +89,7 @@ casper.then(function() {
 		});
 	}, function() {
 		this.click('.savedCriteriaLoad');
-		this.waitUntilVisible('.mask');
+		this.myWaitUntilVisible('.mask');
 		this.waitWhileVisible('.mask');
 		this.waitFor(function() {
 			return this.evaluate(function() {
@@ -97,7 +106,7 @@ casper.then(function() {
 	this.myBeginStep('initialize order');
 	this.click('#more-aggressive');
 
-	this.waitUntilVisible('#view-selected-portfolio-notes', function() {
+	this.myWaitUntilVisible('#view-selected-portfolio-notes', function() {
 		this.click('#view-selected-portfolio-notes');
 	});
 });
@@ -107,7 +116,7 @@ casper.then(function() {
 casper.then(function() {
 	this.myBeginStep('if projected return high enough, continue order');
 	
-	this.waitUntilVisible('#finish2', function() {
+	this.myWaitUntilVisible('#finish2', function() {
 		var expectedReturn = this.evaluate(function() {
 			var formattedExpectedReturn = document.querySelector('#projected-returns').innerHTML;
 			var expectedReturn = formattedExpectedReturn.replace('%', '');
