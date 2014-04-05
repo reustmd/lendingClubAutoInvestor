@@ -2,12 +2,15 @@ var casper = require('casper').create();
 var url = 'https://www.lendingclub.com/account/gotoLogin.action';
 
 var email = casper.cli.get('email');
+// User should input password with single quote, if it have space in password.
 var password = casper.cli.get('password');
 var minAvailableCash = casper.cli.get('minCash');
 var minExpectedReturn = casper.cli.get('minReturn');
 var globalTimeout = casper.cli.get('timeout');
+// User should input filter with single quote, if it have spaces in filter name.
+var filterName = casper.cli.get('filterName');
 
-if (!email || !password || !minAvailableCash || !minExpectedReturn) { 
+if (!email || !password || !minAvailableCash || !minExpectedReturn || !filterName) {
 	casper.echo('ERROR missing parameter(s)');
 	casper.exit();
 }
@@ -96,7 +99,7 @@ casper.then(function() {
 
 	this.myWaitFor(function() {
 		return this.evaluate(function() {
-			return document.querySelector('.savedCriteriaLoad').innerHTML === "Reust Standard";
+			return document.querySelector('.savedCriteriaLoad').innerHTML === filterName;
 		});
 	}, function() {
 		this.click('.savedCriteriaLoad');
