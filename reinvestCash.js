@@ -6,9 +6,15 @@ var password = casper.cli.get('password');
 var minAvailableCash = casper.cli.get('minCash');
 var minExpectedReturn = casper.cli.get('minReturn');
 var globalTimeout = casper.cli.get('timeout');
+var filterName = casper.cli.get('filterName');
 
-if (!email || !password || !minAvailableCash || !minExpectedReturn) { 
+if (!email || !password || !minAvailableCash || !minExpectedReturn || !filterName) {
 	casper.echo('ERROR missing parameter(s)');
+	casper.exit();
+}
+
+if (casper.cli.args.length !== 5) {
+	casper.echo('ERROR too many parameters...');
 	casper.exit();
 }
 
@@ -96,7 +102,7 @@ casper.then(function() {
 
 	this.myWaitFor(function() {
 		return this.evaluate(function() {
-			return document.querySelector('.savedCriteriaLoad').innerHTML === "Reust Standard";
+			return document.querySelector('.savedCriteriaLoad').innerHTML === filterName;
 		});
 	}, function() {
 		this.click('.savedCriteriaLoad');
