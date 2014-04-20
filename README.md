@@ -1,3 +1,13 @@
+Update
+=======================
+
+I have recently joined the Lendingclub Prime program, which performs auto-reinvestment of cash on your behalf. I have stopped using this project as a result. I'll leave the code around in-case anyone wants it, but be warned that I am no longer maintaining this project.
+
+
+
+
+
+
 LendingClubAutoInvestor
 =======================
 
